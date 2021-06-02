@@ -4,7 +4,8 @@ import {
     Keyboard, 
     KeyboardAvoidingView, 
     Platform,
-    Modal
+    Modal,
+    ActivityIndicator
 } from 'react-native'
 
 import { LinearGradient } from 'expo-linear-gradient'
@@ -26,13 +27,35 @@ import {
     ButtonLinkText
 } from './styles'
 
-const Home = () =>{
-    const[input, setInput] = useState('')
-    const[modalVisible, setModalVisible] = useState(false)
+import api from '../../services/api'
 
-    const handleShortLink = () =>{
-            // alert(input)
-        setModalVisible(true)
+const Home = () =>{
+    const [loading, setLoading] = useState(false) 
+    const [input, setInput] = useState('')
+    const [modalVisible, setModalVisible] = useState(false)
+    const [data, setData] = useState({})
+
+    const handleShortLink = async () =>{
+        setLoading(true)
+        try {
+            const response = await api.post('/shorten',
+            {
+                long_url: input
+            })
+            setData(response.data)
+            
+            setModalVisible(true)
+            
+            Keyboard.dismiss()
+            setLoading(false)
+            setInput('')
+        } catch{
+            alert('Algo errado não esta certo. Tente novamente')
+            Keyboard.dismiss()
+            setInput('')
+            setLoading(false)
+        }
+    
     }
 
     return(
@@ -75,8 +98,14 @@ const Home = () =>{
                                 onChangeText={text => setInput(text)}
                             />
                         </ContainerInput>
-                        <ButtonLink onPress={ handleShortLink}  >
-                            <ButtonLinkText>Encurtar</ButtonLinkText>
+                        <ButtonLink onPress={ handleShortLink}>
+                            {
+                                loading ? (
+                                    <ActivityIndicator color={'#121212'} size={24}/>
+                                ) : (
+                                    <ButtonLinkText>Encurtar</ButtonLinkText>
+                                )
+                            }
                         </ButtonLink>
                     </ContainerContent>
                 </KeyboardAvoidingView>
@@ -86,7 +115,8 @@ const Home = () =>{
                     animationType={'slide'}
                 >
                     <ModalLink
-                        onClose={() => setModalVisible(false)} 
+                        onClose={() => setModalVisible(false)}
+                        data={data}
                     />
                 </Modal>
             </LinearGradient>

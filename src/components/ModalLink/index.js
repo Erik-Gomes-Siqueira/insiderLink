@@ -13,17 +13,17 @@ import {
 import { Feather } from '@expo/vector-icons'
 import ClipBoard from 'expo-clipboard'
 
-const ModalLink = ({onClose}) => {
+const ModalLink = ({onClose, data}) => {
 
     const copyLink = () => {
-        ClipBoard.setString('htpps://novolink.com')
+        ClipBoard.setString(data.link)
         alert('Link copiado! :)')
     }
 
     const handleShare  = async () =>{
         try {
             const result = await Share.share({
-                message:`Link: htpps://novolink.com`
+                message:`Link: ${data.link}`
 
             })
             if( result.action === Share.sharedAction){
@@ -65,13 +65,13 @@ const ModalLink = ({onClose}) => {
                 </Header>
                 <LinkArea>
                     <Title>Link reduzido</Title>
-                    <LongUrl numberOfLines={1} >https://youtube.com/</LongUrl>
+                    <LongUrl numberOfLines={1} >{data.long_url}</LongUrl>
                     <ShortLinkArea
                         activeOpacity={1}
                         onPress={copyLink}
                     >
                         <ShortLinkUrl numberOfLines={1} >
-                            https://bit.ly/you
+                            {data.link}
                         </ShortLinkUrl>
                         <TouchableOpacity onPress={copyLink}>
                             <Feather
