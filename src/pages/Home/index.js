@@ -28,6 +28,7 @@ import {
 } from './styles'
 
 import api from '../../services/api'
+import { saveLink } from '../../utils/storeLinks'
 
 const Home = () =>{
     const [loading, setLoading] = useState(false) 
@@ -45,6 +46,9 @@ const Home = () =>{
             setData(response.data)
             
             setModalVisible(true)
+
+            //De tudo certo, agora vamos salvar o link em uma lista no storage usando o async storage
+            saveLink('insiderlinks', response.data)
             
             Keyboard.dismiss()
             setLoading(false)
